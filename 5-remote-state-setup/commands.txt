@@ -1,5 +1,10 @@
+########################################################################
+Commands To setup the tools needed for remote backend
+########################################################################
 # Linux
-export AWS_PROFILE=infra
+export AWS_PROFILE=infra 
+#here we till the AWS provider which profile to use in the credentials file
+#this should be after we add the infra profile through `aws configure --profile infra`
 
 # Windows
 $env:AWS_PROFILE="infra"
@@ -13,4 +18,9 @@ terraform plan -out state.tfplan
 terraform apply state.tfplan
 
 # Make note of the s3 bucket name and dynamodb table name
+########################################################################
+Commands of State migration module
+########################################################################
 
+terraform init -backend-config="bucket=BUCKET_NAME" -backend-config="region=REGION_NAME" -backend-config="dynamodb_table=TABLE_NAME"
+#the parameters in here are outputs from the tools setup above

@@ -36,12 +36,14 @@ variable "read_only_users" {
 provider "aws" {
   version = "~>2.0"
   region  = var.region
+  #We didn't spicify the profile this time in the provider as we exported it as ENV
 }
 
 ##################################################################################
 # RESOURCES
 ##################################################################################
 
+#The name of the S3 bucket have to be universally unique
 resource "random_integer" "rand" {
   min = 10000
   max = 99999
@@ -57,8 +59,8 @@ resource "aws_dynamodb_table" "terraform_statelock" {
   name           = local.dynamodb_table_name
   read_capacity  = 20
   write_capacity = 20
-  hash_key       = "LockID"
-
+  #this is a requirement of using S3 as a back end with the DynamoDB table for locking
+  hash_key       = "LockID" 
   attribute {
     name = "LockID"
     type = "S"
@@ -68,7 +70,7 @@ resource "aws_dynamodb_table" "terraform_statelock" {
 resource "aws_s3_bucket" "state_bucket" {
   bucket        = local.bucket_name
   acl           = "private"
-  force_destroy = true
+  force_destroy = true //in production, you might set that to false
 
   versioning {
     enabled = true
